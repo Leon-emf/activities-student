@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: peppermint
+  # annotations: # éventuelles annotations pour TLS, redirections, etc.
+spec:
+  ingressClassName: nginx # classe d'Ingress gérée par l'Ingress Controller NGINX
+  rules:
+    - host: peppermint.X.X.X.X.nip.io # nom DNS public (nip.io résout l'IP encodée dans le nom), demander l'ip publique du controller ingress à votre enseignant si inconnu.
+      http:
+        paths:
+          - path: /
+            pathType: Prefix # route toutes les requêtes dont le chemin commence par "/"
+            backend:
+              service:
+                name: peppermint # Service Kubernetes cible (défini en 08-peppermint-service.yaml)
+                port:
+                  number: 3000 # port exposé par le Service pour la partie front

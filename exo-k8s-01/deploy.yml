@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginxhello-deploy
+  namespace: fd31-blue-prod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginxhello
+  template:
+    metadata:
+      labels:
+        app: nginxhello
+    spec:
+      containers:
+      - name: nginxhello
+        image: nginxdemos/hello
+        ports:
+        - containerPort: 80

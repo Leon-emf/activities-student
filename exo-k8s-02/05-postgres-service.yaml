@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: peppermint-postgres # Nom du Service pour PostgreSQL (DNS: peppermint-postgres)
+spec:
+  selector:
+    app: peppermint-postgres # Lie le Service aux Pods du Deployment postgres
+  ports:
+    - name: postgres # Nom logique du port (utile pour la lisibilité)
+      port: 5432 # Port exposé par le Service à l'intérieur du cluster
+      targetPort: 5432 # Port sur lequel le conteneur PostgreSQL écoute
+      protocol: TCP # Protocole utilisé (TCP par défaut pour Postgres)
+  type: ClusterIP # Service interne au cluster (valeur par défaut)

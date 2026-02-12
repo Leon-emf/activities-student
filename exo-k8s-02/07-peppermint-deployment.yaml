@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peppermint
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: peppermint
+  template:
+    metadata:
+      labels:
+        app: peppermint
+    spec:
+      containers:
+        - name: peppermint
+          image: pepperlabs/peppermint:latest
+          env:
+          - name: HOSTNAME
+            value: "0.0.0.0"
+          ports:
+            - containerPort: 3000
+            - containerPort: 5003
+          envFrom:
+            - secretRef:
+                name: peppermint-secret

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peppermint-postgres # Nom du Deployment (référence Kubernetes)
+spec:
+  replicas: 1 # Pour une base de données, on garde 1 seul replica
+  selector:
+    matchLabels:
+      app: peppermint-postgres # Doit correspondre aux labels du template
+  template:
+    metadata:
+      labels:
+        app: peppermint-postgres # Labels appliqués aux Pods créés par ce Deployment
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:18 # Image officielle Postgres (ici latest pour l'exercice)
+          ports:
+            - containerPort: 5432 # Port exposé par le conteneur PostgreSQL
+          env:
+            - name: POSTGRES_USER
+              value: peppermint # Utilisateur PostgreSQL en clair — NE PAS faire en production
+            - name: POSTGRES_PASSWORD
+              value: "1234" # Mot de passe en clair — NE PAS faire en production
+            - name: POSTGRES_DB
+              value: peppermint # nom de la db initiale

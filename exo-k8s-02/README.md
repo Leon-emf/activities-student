@@ -105,7 +105,7 @@ Créer des données **à la main**, puis observer leur disparition.
 ### Connexion au conteneur PostgreSQL
 ```bash
 kubectl get pods
-kubectl exec -it <nom-du-pod> -- psql -U peppermint -d peppermint 
+kubectl exec -it peppermint-postgres-57d5844fb-dqdnr -- psql -U peppermint -d peppermint 
 #Cette commande éxecute la commande "psql -U peppermnint -d peppermint" $ l'intérieur du conteneur.
 #Il est aussi possible de faire un "port-forward" et de vous y connecter via un client postgres local.
 ```
@@ -123,7 +123,7 @@ SELECT * FROM demo;
 
 ### Supprimer le Pod
 ```bash
-kubectl delete pod <nom-du-pod>
+kubectl delete pod peppermint-postgres-57d5844fb-dqdnr
 kubectl get pods
 ```
 
@@ -459,7 +459,7 @@ metadata:
 spec:
   ingressClassName: nginx # classe d'Ingress gérée par l'Ingress Controller NGINX
   rules:
-    - host: peppermint.X.X.X.X.nip.io # nom DNS public (nip.io résout l'IP encodée dans le nom), demander l'ip publique du controller ingress à votre enseignant si inconnu.
+    - host: peppermint.89.145.167.242.nip.io # nom DNS public (nip.io résout l'IP encodée dans le nom), demander l'ip publique du controller ingress à votre enseignant si inconnu.
       http:
         paths:
           - path: /

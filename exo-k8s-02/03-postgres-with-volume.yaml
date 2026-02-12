@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: peppermint-postgres # Nom du Deployment
+spec:
+  replicas: 1 # Nombre de réplicas (pour une DB, toujours 1 dans un deployment)
+  selector:
+    matchLabels:
+      app: peppermint-postgres # Sélecteur pour lier le ReplicaSet / Pods
+  template:
+    metadata:
+      labels:
+        app: peppermint-postgres # Labels appliqués aux Pods créés
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:18 # Image officielle Postgres
+          ports:
+            - containerPort: 5432 # Port exposé dans le conteneur
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+          volumeMounts:
+            - name: postgres-data #nom du volume à monter, déclaré plus bas.
+              mountPath: /var/lib/postgresql # Répertoire des données PostgreSQL
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: postgres-data # Lie le PVC (02-postgres-pvc.yaml) au Pod

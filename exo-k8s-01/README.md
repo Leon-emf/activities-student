@@ -65,17 +65,17 @@ Attendu : une liste de nodes au statut `Ready` et une liste de namespaces (`defa
    Pourquoi : un namespace isole des ressources et évite les conflits de noms avec d'autres exercices.
 
 ```bash
-kubectl create ns my-ns
+kubectl create ns fd31-blue-prod
 ```
 
-Attendu : `namespace/my-ns created` (ou un message indiquant qu'il existe déjà).
+Attendu : `namespace/fd31-blue-prod created` (ou un message indiquant qu'il existe déjà).
 
 3. Lancer rapidement un Pod (approche impérative avec kubectl run)
    Pourquoi : l'approche impérative est utile pour tester vite, mais elle est moins reproductible que le YAML.
 
 ```bash
-kubectl run nginx --image=nginxdemos/hello --restart=Never -n my-ns
-kubectl get pods -n my-ns
+kubectl run nginx --image=nginxdemos/hello --restart=Never -n fd31-blue-prod
+kubectl get pods -n fd31-blue-prod
 ```
 
 Attendu : un Pod `nginx` au statut `Running` (ou `ContainerCreating` pendant le démarrage).
@@ -88,7 +88,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: nginxhello
-  namespace: my-ns
+  namespace: fd31-blue-prod
 spec:
   containers:
   - name: nginxhello
@@ -110,9 +110,9 @@ Attendu : `pod/nginxhello created` (ou `configured` si le Pod existait déjà).
    Pourquoi : `get` donne l'état global, `describe` montre les détails et événements, `logs` affiche la sortie du container.
 
 ```bash
-kubectl get pods -n my-ns
-kubectl describe pod nginxhello -n my-ns
-kubectl logs nginxhello -n my-ns
+kubectl get pods -n fd31-blue-prod
+kubectl describe pod nginxhello -n fd31-blue-prod
+kubectl logs nginxhello -n fd31-blue-prod
 ```
 
 Attendu : `get` montre `nginxhello` en `Running`, `describe` affiche les événements de démarrage, `logs` montre la page de démo nginx.
@@ -121,7 +121,7 @@ Attendu : `get` montre `nginxhello` en `Running`, `describe` affiche les événe
    Pourquoi : le port-forward crée un tunnel local vers un port du Pod sans exposer de service public.
 
 ```bash
-kubectl port-forward pod/nginxhello 8080:80 -n my-ns
+kubectl port-forward pod/nginxhello 8080:80 -n fd31-blue-prod
 # accès via navigateur à http://localhost:8080
 ```
 
@@ -132,8 +132,8 @@ CTRL + C pour terminer le port-forwarding.
    Pourquoi : supprimer les ressources évite les coûts inutiles et garde le cluster propre. Gardez le namespace pour l'étape Deployment.
 
 ```bash
-kubectl delete pod nginxhello -n my-ns
-kubectl delete pod nginx -n my-ns   # si créé avec kubectl run
+kubectl delete pod nginxhello -n fd31-blue-prod
+kubectl delete pod nginx -n fd31-blue-prod   # si créé avec kubectl run
 ```
 
 Attendu : `pod/nginxhello deleted` et `pod/nginx deleted` si présent.
@@ -147,8 +147,8 @@ Un Deployment maintient le nombre désiré de Pods et permet le rescheduling aut
    Pourquoi : un Deployment gère ses propres Pods, on repart d'un état propre.
 
 ```bash
-kubectl delete pod nginxhello -n my-ns
-kubectl delete pod nginx -n my-ns   # si créé avec kubectl run
+kubectl delete pod nginxhello -n fd31-blue-prod
+kubectl delete pod nginx -n fd31-blue-prod   # si créé avec kubectl run
 ```
 
 Attendu : `pod/... deleted` (ou un message indiquant qu'ils n'existent pas).
@@ -161,7 +161,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nginxhello-deploy
-  namespace: my-ns
+  namespace: fd31-blue-prod
 spec:
   replicas: 1
   selector:
@@ -183,8 +183,8 @@ spec:
 
 ```bash
 kubectl apply -f deploy.yml
-kubectl get deploy -n my-ns
-kubectl get pods -n my-ns
+kubectl get deploy -n fd31-blue-prod
+kubectl get pods -n fd31-blue-prod
 ```
 
 Attendu : `deployment.apps/nginxhello-deploy created` et un Pod géré par un ReplicaSet en `Running`.
@@ -193,7 +193,7 @@ Attendu : `deployment.apps/nginxhello-deploy created` et un Pod géré par un Re
    Les labels lient le Deployment / ReplicaSet aux Pods.
 
 ```bash
-kubectl get pod <pod-name> -n <namespace> --show-labels
+kubectl get pod nginxhello-deploy-bff8894f4-5fdtk -n fd31-blue-prod --show-labels
 ```
 
 Attendu : les labels incluent `app=nginxhello`.
@@ -206,8 +206,8 @@ Attendu : les labels incluent `app=nginxhello`.
 
 ```bash
 kubectl apply -f deploy.yml
-kubectl get deploy nginxhello-deploy -n my-ns
-kubectl get pods -n my-ns
+kubectl get deploy nginxhello-deploy -n fd31-blue-prod
+kubectl get pods -n fd31-blue-prod
 ```
 
 * Observer : le ReplicaSet crée ou supprime des Pods pour atteindre le nombre désiré.
@@ -216,8 +216,8 @@ kubectl get pods -n my-ns
    Supprimez un Pod et observez le remplacement automatique.
 
 ```bash
-kubectl delete pod <pod-name> -n my-ns
-kubectl get pods -n my-ns
+kubectl delete pod <pod-name> -n fd31-blue-prod
+kubectl get pods -n fd31-blue-prod
 ```
 
 Attendu : un nouveau Pod apparaît avec un nom différent, puis passe en `Running`.
@@ -225,7 +225,7 @@ Attendu : un nouveau Pod apparaît avec un nom différent, puis passe en `Runnin
 7. Accéder à l'application depuis votre machine (port-forward)
 
 ```bash
-kubectl port-forward deploy/nginxhello-deploy 8080:80 -n my-ns
+kubectl port-forward deploy/nginxhello-deploy 8080:80 -n fd31-blue-prod
 # accès via navigateur à http://localhost:8080
 ```
 
@@ -234,7 +234,7 @@ Attendu : `Forwarding from 127.0.0.1:8080` et la page de démo en retour.
 8. Nettoyage
 
 ```bash
-kubectl delete deploy nginxhello-deploy -n my-ns
+kubectl delete deploy nginxhello-deploy -n fd31-blue-prod
 ```
 
 Attendu : `deployment.apps/nginxhello-deploy deleted`.
